@@ -28,7 +28,7 @@ class DotaDataSet(Dataset):
             # Берем всех Radiant (индексы 0-4), кроме самого себя (target)
             allies = np.delete(matches_heroes[0:5], pos_idx) # ИСПРАВЛЕНО
             # Враги - все 5 героев Dire
-            enemies = matches_heroes[5:10].copy()
+            enemies = matches_heroes[5:10].clone()
         else:
             # Предсказываем за Dire
             target_hero = matches_heroes[pos_idx]
@@ -36,7 +36,7 @@ class DotaDataSet(Dataset):
             # Берем всех Dire (индексы 5-9), кроме самого себя
             allies = np.delete(matches_heroes[5:10], position) # ИСПРАВЛЕНО (pos_idx - 5 это и есть position)
             # Враги - все 5 героев Radiant
-            enemies = matches_heroes[0:5].copy()
+            enemies = matches_heroes[0:5].clone()
             
         if self.augment:
             num_hidden_allies = np.random.randint(0, 4) # Нужно оставить минимум 1 союзника
@@ -86,24 +86,29 @@ def creator_loader(csv_file,batch_size=32,test_size=0.2):
     return train_loader, val_loader
 # Допустим, мы берем очень маленький батч (batch_size=2), 
 # чтобы вывод в консоли не был гигантским.
-train_loader, val_loader = creator_loader("dota_ml_current_patch.csv", batch_size=2)
+if __name__ == "__main__":
 
-# Берем один батч из итератора
-batch = next(iter(train_loader))
+    train_loader, val_loader = creator_loader(
+        "dota_ml_current_patch.csv",
+        batch_size=2
+    )
 
-print("Ключи словаря:", batch.keys())
-print("\n--- Союзники (allies) ---")
-print("Shape:", batch["allies"].shape)
-print(batch["allies"])
+    batch = next(iter(train_loader))
 
-print("\n--- Враги (enemies) ---")
-print("Shape:", batch["enemies"].shape)
-print(batch["enemies"])
+    print("Ключи словаря:", batch.keys())
 
-print("\n--- Позиция (position) ---")
-print("Shape:", batch["position"].shape)
-print(batch["position"])
+    print("\n--- Союзники (allies) ---")
+    print("Shape:", batch["allies"].shape)
+    print(batch["allies"])
 
-print("\n--- Целевой герой (target) ---")
-print("Shape:", batch["target"].shape)
-print(batch["target"])
+    print("\n--- Враги (enemies) ---")
+    print("Shape:", batch["enemies"].shape)
+    print(batch["enemies"])
+
+    print("\n--- Позиция (position) ---")
+    print("Shape:", batch["position"].shape)
+    print(batch["position"])
+
+    print("\n--- Целевой герой (target) ---")
+    print("Shape:", batch["target"].shape)
+    print(batch["target"])
